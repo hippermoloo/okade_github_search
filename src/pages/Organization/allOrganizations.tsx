@@ -1,10 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Row,
-  Col,
-  Card,
-  Divider,
-} from "antd";
+import { Row, Col, Card, Divider } from "antd";
 
 import { useNavigate } from "react-router-dom";
 import Meta from "antd/lib/card/Meta";
@@ -13,11 +8,11 @@ import { AllOrganizationDto } from "src/services/organization/dto/allOrganizatio
 import LoadingComponent from "src/components/Loading/loading";
 import NotFoundComponent from "src/components/Not Found";
 
-
-
 const AllOrganizationComponent = () => {
   const [searchLoading, setSearchLoading] = useState<boolean>(true);
-  const [allOrganizationDto, setAllOrganizationDto] = useState<AllOrganizationDto[] | null>([]);
+  const [allOrganizationDto, setAllOrganizationDto] = useState<
+    AllOrganizationDto[] | null
+  >([]);
 
   let navigate = useNavigate();
 
@@ -38,31 +33,40 @@ const AllOrganizationComponent = () => {
     } catch (e) {}
   }, []);
 
-
   const gotoNext = (x: string | undefined) => {
     navigate("/organization-details?username=" + x);
   };
 
-
   return (
     <React.Fragment>
       <section id="cards-section" className="cards-section wf-section">
-        <div
-          className="centered-container w-container"
-          
-        >
+        <div className="centered-container w-container">
           <div style={{ marginTop: "5%" }}>
             {searchLoading === true ? (
               <LoadingComponent searchLoading={searchLoading} />
             ) : (
               <>
+                <Row>
+                  <Col className="gutter-row" style={{ marginBottom: "2%" }}>
+                    <b>
+                      Total Organization:{" "}
+                      {allOrganizationDto?.length! > 0
+                        ? allOrganizationDto?.length
+                        : 0}
+                    </b>
+                  </Col>
+                </Row>
                 <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
                   {allOrganizationDto !== null &&
                   searchLoading === false &&
                   allOrganizationDto.length > 0 ? (
                     allOrganizationDto.map((x: AllOrganizationDto) => (
-                    
-                      <Col className="gutter-row" span={6} style={{marginBottom: '2%'}} key={x.login}>
+                      <Col
+                        className="gutter-row"
+                        span={6}
+                        style={{ marginBottom: "2%" }}
+                        key={x.login}
+                      >
                         <Card
                           size="small"
                           className="border-0 work-container"
@@ -79,14 +83,16 @@ const AllOrganizationComponent = () => {
                               src={`${x.avatar_url}`}
                             />
                           }
-                          onClick={() => {gotoNext(x.login)}}
+                          onClick={() => {
+                            gotoNext(x.login);
+                          }}
                         >
                           <Meta title="Profile Name" description={x.login} />
                           <Divider />
                           <Meta
                             title={"Learn more on Github"}
                             className="text-truncate"
-                            description={x.description?? 'No description'}
+                            description={x.description ?? "No description"}
                           />
                         </Card>
                       </Col>
