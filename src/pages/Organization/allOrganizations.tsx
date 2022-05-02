@@ -1,0 +1,144 @@
+import React, { useEffect, useState } from "react";
+import {
+  Form,
+  Button,
+  Skeleton,
+  Row,
+  Col,
+  Card,
+  Divider,
+  Result,
+} from "antd";
+
+import userService from "src/services/users/userService";
+import { AllUserDto } from "src/services/users/dto/allUserDto";
+import { useNavigate } from "react-router-dom";
+import Meta from "antd/lib/card/Meta";
+import organizationService from "src/services/organization/organisationService";
+import { AllOrganizationDto } from "src/services/organization/dto/allOrganizationDto";
+
+
+
+const AllOrganizationComponent = () => {
+  const [form] = Form.useForm();
+  const [searchType, setSearchType] = useState<String>("users");
+  const [searchLoading, setSearchLoading] = useState<boolean>(true);
+  const [allOrganizationDto, setAllOrganizationDto] = useState<AllOrganizationDto[] | null>([]);
+
+  let navigate = useNavigate();
+
+  useEffect(() => {
+    console.count("All Organizations");
+    try {
+      organizationService
+        .getAllOrganization()
+        .then((result: AllOrganizationDto[]) => {
+          setSearchLoading(false);
+          if (result !== undefined) {
+            setAllOrganizationDto(result);
+          }
+        })
+        .finally(() => {
+          setSearchLoading(false);
+        });
+    } catch (e) {}
+  }, []);
+
+
+  const gotoNext = (x: string | undefined) => {
+    navigate("/organization-details?username=" + x);
+  };
+
+  const gotoHome = () => {
+    navigate("/");
+  };
+
+  return (
+    <React.Fragment>
+      <section id="cards-section" className="cards-section wf-section">
+        <div
+          className="centered-container w-container"
+          
+        >
+          <div style={{ marginTop: "5%" }}>
+            {searchLoading === true ? (
+              <>
+                <Skeleton
+                  loading={searchLoading}
+                  active
+                  avatar
+                  style={{ marginTop: "20px" }}
+                ></Skeleton>
+                <Skeleton
+                  loading={searchLoading}
+                  active
+                  avatar
+                  style={{ marginTop: "10px" }}
+                ></Skeleton>
+                <Skeleton
+                  loading={searchLoading}
+                  active
+                  avatar
+                  style={{ marginTop: "10px" }}
+                ></Skeleton>
+              </>
+            ) : (
+              <>
+                <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
+                  {allOrganizationDto !== null &&
+                  searchLoading === false &&
+                  allOrganizationDto.length > 0 ? (
+                    allOrganizationDto.map((x: AllOrganizationDto) => (
+                    
+                      <Col className="gutter-row" span={6} style={{marginBottom: '2%'}} key={x.login}>
+                        <Card
+                          size="small"
+                          className="border-0 work-container"
+                          style={{
+                            background: "#eeeeee",
+                            borderRadius: "16px",
+                          }}
+                          key={x.login}
+                          hoverable
+                          cover={
+                            <img
+                              width={130}
+                              height={160}
+                              src={`${x.avatar_url}`}
+                            />
+                          }
+                          onClick={() => {gotoNext(x.login)}}
+                        >
+                          <Meta title="Profile Name" description={x.login} />
+                          <Divider />
+                          <Meta
+                            title={"Learn more on Github"}
+                            className="text-truncate"
+                            description={x.description?? 'No description'}
+                          />
+                        </Card>
+                      </Col>
+                    ))
+                  ) : (
+                      <>
+                      <Col className="gutter-row" span={5}></Col>
+                      <Col >
+                    <Result status="404"
+                        title="404"
+                        subTitle="Sorry, resources not exist kindly use the search filter to begin new search."
+                        extra={<Button onClick={() => gotoHome()} type="primary">Back Home</Button>}
+                    />
+                    </Col>
+                    </>
+                  )}
+                </Row>
+              </>
+            )}
+          </div>
+        </div>
+      </section>
+    </React.Fragment>
+  );
+};
+
+export default AllOrganizationComponent;

@@ -18,8 +18,8 @@ http.interceptors.request.use(
   function(config:any) {
 
 
-    config.headers.common['Authorization'] = 'Bearer ' + '';
-    config.headers.common['User-Agent'] = 'github-search-okade';
+    // config.headers.common['Authorization'] = 'Bearer ' + '';
+    // config.headers.common['User-Agent'] = 'github-search-okade';
     // config.headers.common['.AspNetCore.Culture'] = abp.utils.getCookieValue('Abp.Localization.CultureName');
     // config.headers.common['Abp.TenantId'] = abp.multiTenancy.getTenantIdCookie();
 
@@ -40,7 +40,7 @@ http.interceptors.response.use(
         title: error.response.data.error.message,
         content: error.response.data.error.details,
       });
-    } else if(!!error.response && !!error.response.data.error && error.response.data.error.message == 'Current user did not login to the application!'){
+    } else if(!!error.response && !!error.response.data.error && error.response.data.error.message === 'Current user did not login to the application!'){
       Modal.error({ content: error.response.data.error.message });
       window.location.replace("/");
       return;

@@ -7,13 +7,13 @@ class OrganizationService {
 
     public async getAllOrganization(): Promise<AllOrganizationDto[]> {
         let result: AxiosResponse = await http.get('organizations');
-        return result.data.result;
+        return result.data;
     }
 
     public async getOrganization(organization:string): Promise<OrganizationDto> {
-        let result: AxiosResponse = await http.get(`orgs/${organization}}`);
-        return result.data.result;
+        let result: AxiosResponse = await http.get(`orgs/${organization}`);
+        return result.data;
     }
 }
 
-export default OrganizationService;
+export default new OrganizationService();

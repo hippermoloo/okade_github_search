@@ -7,13 +7,13 @@ class UserService {
 
     public async getAllUsers(): Promise<AllUserDto[]> {
         let result: AxiosResponse = await http.get('users');
-        return result.data.result;
+        return result.data;
     }
 
     public async getUsers(username:string): Promise<UserDto> {
         let result: AxiosResponse = await http.get(`users/${username}`);
-        return result.data.result;
+        return result.data;
     }
 }
 
-export default UserService;
+export default new UserService();
