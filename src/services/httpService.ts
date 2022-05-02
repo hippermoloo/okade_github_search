@@ -17,12 +17,6 @@ const http = axios.create({
 http.interceptors.request.use(
   function(config:any) {
 
-
-    // config.headers.common['Authorization'] = 'Bearer ' + '';
-    // config.headers.common['User-Agent'] = 'github-search-okade';
-    // config.headers.common['.AspNetCore.Culture'] = abp.utils.getCookieValue('Abp.Localization.CultureName');
-    // config.headers.common['Abp.TenantId'] = abp.multiTenancy.getTenantIdCookie();
-
     return config;
   },
   function(error) {
@@ -35,22 +29,13 @@ http.interceptors.response.use(
     return response;
   },
   error => {
-    if (!!error.response && !!error.response.data.error && !!error.response.data.error.message && error.response.data.error.details) {
-      Modal.error({
-        title: error.response.data.error.message,
-        content: error.response.data.error.details,
-      });
-    } else if(!!error.response && !!error.response.data.error && error.response.data.error.message === 'Current user did not login to the application!'){
-      Modal.error({ content: error.response.data.error.message });
-      window.location.replace("/");
-      return;
-    } else if (!!error.response && !!error.response.data.error && !!error.response.data.error.message) {
-      Modal.error({
-        title: 'LoginFailed',
-        content: error.response.data.error.message,
-      });
-    } else if (!error.response) {
-      Modal.error({ content: 'UnknownError' });
+    let status = Number(error.response.status);
+    let message = String(error.response.data.message);
+
+    if (status === 404 && message === 'Not Found') {
+      window.location.replace("/page-not-found");
+    } else if (status === 505) {
+      window.location.replace("/page-not-found");
     }
 
     setTimeout(() => {}, 1000);
