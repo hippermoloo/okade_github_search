@@ -1,32 +1,27 @@
 import React, { useEffect, useState } from "react";
 import {
-  Form,
-  Button,
-  Skeleton,
   Row,
   Col,
   Card,
   Divider,
-  Result,
 } from "antd";
 
 import userService from "src/services/users/userService";
 import { AllUserDto } from "src/services/users/dto/allUserDto";
 import { useNavigate } from "react-router-dom";
 import Meta from "antd/lib/card/Meta";
+import LoadingComponent from "src/components/Loading/loading";
+import NotFoundComponent from "src/components/Not Found";
 
 
 
 const AllUserComponent = ({searching}: {searching:boolean}) => {
-  const [form] = Form.useForm();
-  const [searchType, setSearchType] = useState<String>("users");
   const [searchLoading, setSearchLoading] = useState<boolean>(searching??true);
   const [allUsersDto, setAllUsersDto] = useState<AllUserDto[] | null>([]);
 
   let navigate = useNavigate();
 
   useEffect(() => {
-    console.count("All Users");
     try {
         userService
         .getAllUsers()
@@ -47,9 +42,6 @@ const AllUserComponent = ({searching}: {searching:boolean}) => {
     navigate("/user-details?username=" + x);
   };
 
-  const gotoHome = () => {
-    navigate("/");
-  };
 
   return (
     <React.Fragment>
@@ -59,26 +51,7 @@ const AllUserComponent = ({searching}: {searching:boolean}) => {
         >
           <div style={{ marginTop: "5%" }}>
             {searchLoading === true ? (
-              <>
-                <Skeleton
-                  loading={searchLoading}
-                  active
-                  avatar
-                  style={{ marginTop: "20px" }}
-                ></Skeleton>
-                <Skeleton
-                  loading={searchLoading}
-                  active
-                  avatar
-                  style={{ marginTop: "10px" }}
-                ></Skeleton>
-                <Skeleton
-                  loading={searchLoading}
-                  active
-                  avatar
-                  style={{ marginTop: "10px" }}
-                ></Skeleton>
-              </>
+              <LoadingComponent searchLoading={searchLoading} />
             ) : (
               <>
                 <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
@@ -119,16 +92,7 @@ const AllUserComponent = ({searching}: {searching:boolean}) => {
                       </Col>
                     ))
                   ) : (
-                      <>
-                      <Col className="gutter-row" span={5}></Col>
-                      <Col >
-                    <Result status="404"
-                        title="404"
-                        subTitle="Sorry, resources not exist kindly use the search filter to begin new search."
-                        extra={<Button onClick={() => gotoHome()} type="primary">Back Home</Button>}
-                    />
-                    </Col>
-                    </>
+                    <NotFoundComponent />
                   )}
                 </Row>
               </>

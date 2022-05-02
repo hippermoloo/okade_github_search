@@ -1,13 +1,9 @@
 import React, { useEffect, useState } from "react";
 import {
-  Form,
-  Button,
-  Skeleton,
   Row,
   Col,
   Card,
   Divider,
-  Result,
   PageHeader,
   Timeline,
 } from "antd";
@@ -19,10 +15,10 @@ import NavBarComponent from "src/components/Home/NavBar";
 import HeaderComponent from "src/components/Home/Header";
 import FooterComponent from "src/components/footer/footer";
 import { OrganizationDto } from "src/services/organization/dto/organizationDto";
+import LoadingComponent from "src/components/Loading/loading";
+import NotFoundComponent from "src/components/Not Found";
 
 const OrganizationDetailsComponent = () => {
-  const [form] = Form.useForm();
-  const [searchType, setSearchType] = useState<String>("users");
   const [searchLoading, setSearchLoading] = useState<boolean>(true);
   const [allOrganizationDto, setAllOrganizationDto] = useState<OrganizationDto | null>();
 
@@ -65,26 +61,7 @@ const OrganizationDetailsComponent = () => {
         <div className="centered-container w-container">
           <div>
             {searchLoading === true ? (
-              <>
-                <Skeleton
-                  loading={searchLoading}
-                  active
-                  avatar
-                  style={{ marginTop: "20px" }}
-                ></Skeleton>
-                <Skeleton
-                  loading={searchLoading}
-                  active
-                  avatar
-                  style={{ marginTop: "10px" }}
-                ></Skeleton>
-                <Skeleton
-                  loading={searchLoading}
-                  active
-                  avatar
-                  style={{ marginTop: "10px" }}
-                ></Skeleton>
-              </>
+              <LoadingComponent searchLoading={searchLoading} />
             ) : (
               <>
                 <Row>
@@ -175,17 +152,7 @@ const OrganizationDetailsComponent = () => {
                     </>
                     
                   ) : (
-                    <>
-                      <Col className="gutter-row" span={5}></Col>
-                      <Col>
-                        <Result
-                          status="404"
-                          title="404"
-                          subTitle="Sorry, resources not exist kindly use the search filter to begin new search."
-                          extra={<Button onClick={() => gotoHome()} type="primary">Back Home</Button>}
-                        />
-                      </Col>
-                    </>
+                    <NotFoundComponent />
                   )}
                 </Row>
               </>

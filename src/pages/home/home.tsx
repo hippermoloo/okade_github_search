@@ -1,8 +1,16 @@
 import React, { useState } from "react";
-import { Form, Input, Button, Radio, Row, Col, RadioChangeEvent, Modal } from "antd";
+import {
+  Form,
+  Input,
+  Button,
+  Radio,
+  Row,
+  Col,
+  RadioChangeEvent,
+  Modal,
+} from "antd";
 
 import { GithubOutlined, SearchOutlined } from "@ant-design/icons";
-import { AllUserDto } from "src/services/users/dto/allUserDto";
 import { useNavigate } from "react-router-dom";
 
 import NavBarComponent from "src/components/Home/NavBar";
@@ -14,8 +22,7 @@ import userService from "src/services/users/userService";
 import organizationService from "src/services/organization/organisationService";
 import { UserDto } from "src/services/users/dto/userDto";
 import { OrganizationDto } from "src/services/organization/dto/organizationDto";
-
-type LayoutType = Parameters<typeof Form>[0]["layout"];
+import LoadingComponent from "src/components/Loading/loading";
 
 interface IPros {
   searchName: string;
@@ -24,7 +31,6 @@ interface IPros {
 
 const HomeComponent = () => {
   const [form] = Form.useForm();
-  const [formLayout, setFormLayout] = useState<LayoutType>("inline");
   const [searchType, setSearchType] = useState<String>("users");
   const [searchLoading, setSearchLoading] = useState<boolean>(true);
   const [isBtn, setIBtn] = useState<boolean>(false);
@@ -35,12 +41,12 @@ const HomeComponent = () => {
 
   let navigate = useNavigate();
 
-  const onFinish = (formInput: IPros) => {
+  const onFinish = async (formInput: IPros) => {
     try {
       setSearchLoading(true);
       setIBtn(true);
       if (formInput.userType === "users" || searchType === "users") {
-        userService
+        await userService
           .getUsers(formInput.searchName!.trim())
           .then((result: UserDto) => {
             setSearchLoading(false);
@@ -56,9 +62,13 @@ const HomeComponent = () => {
           .finally(() => {
             setSearchLoading(false);
           });
-      } else if (formInput.userType === "organization"  || searchType === "organization") {
+      } else if (
+        formInput.userType === "organization" ||
+        searchType === "organization"
+      ) {
+
         // Fetch Organization
-        organizationService
+        await organizationService
           .getOrganization(formInput.searchName!.trim())
           .then((result: OrganizationDto) => {
             setSearchLoading(false);
@@ -81,13 +91,10 @@ const HomeComponent = () => {
       setSearchLoading(false);
       setIBtn(false);
 
-      // Modal.error({
-      //   title: "Search not find",
-      //   content: `Oops! we cant find your search, kindly check your keyword (${formInput.searchName}) and try again`,
-      // });
 
     } catch (e) {
       setSearchLoading(false);
+      setIBtn(false);
     }
   };
 
@@ -109,18 +116,18 @@ const HomeComponent = () => {
       <HeaderComponent />
       <section id="subscribe-form" className="subscribe-form wf-section">
         <div className="centered-container w-container">
-          {/* <h2>Subscribe form</h2> */}
           <p>
-          Each result in the list will display some basic information about the result (e.g., name, avatar, etc.);
+            Each result in the list will display some basic information about
+            the result (e.g., name, avatar, etc.);
           </p>
           <div className="w-form">
             <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
               <Col className="gutter-row" span={4}></Col>
               <Col>
                 <Form
-                  layout={formLayout}
+                  layout={'inline'}
                   form={form}
-                  initialValues={{ 'userTyp': searchType }}
+                  initialValues={{ userTyp: searchType }}
                   onFinish={onFinish}
                   onFinishFailed={onFinishFailed}
                 >
@@ -136,12 +143,25 @@ const HomeComponent = () => {
                       </Radio.Button>
                     </Radio.Group>
                   </Form.Item>
-                  <Form.Item name="searchName" rules={[{ required: true, message: 'Please enter a search' }]}>
-                    <Input size="large" prefix={<GithubOutlined className="site-form-item-icon" />} placeholder="search" />
+                  <Form.Item
+                    name="searchName"
+                    rules={[
+                      { required: true, message: "Please enter a search" },
+                    ]}
+                  >
+                    <Input
+                      size="large"
+                      prefix={
+                        <GithubOutlined className="site-form-item-icon" />
+                      }
+                      placeholder="search"
+                    />
                   </Form.Item>
                   <Form.Item>
                     <Button
-                      disabled={isBtn} loading={isBtn} htmlType="submit"
+                      disabled={isBtn}
+                      loading={isBtn}
+                      htmlType="submit"
                       icon={<SearchOutlined />}
                       type="primary"
                       shape="round"
@@ -155,8 +175,9 @@ const HomeComponent = () => {
           </div>
         </div>
       </section>
-      {searchType === "users" ? (
-        <AllUserComponent searching={searchLoading}/>
+      {/* {isBtn === true? } */}
+      {isBtn === true? (<LoadingComponent searchLoading={isBtn} />) : isBtn === false && searchType === "users" ? (
+        <AllUserComponent searching={searchLoading} />
       ) : (
         <AllOrganizationComponent />
       )}
